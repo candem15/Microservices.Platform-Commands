@@ -28,6 +28,7 @@ namespace Micro.PlatformService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemDB")); //This will be used at development enviroment. When we move on to production stage at Kubernetes, we will switch to SqlServer.
+            services.AddScoped<IPlatformRepo, PlatformRepo>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
