@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: platforms-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: platfromservice
+  template:
+    metadata:
+      labels:
+        app: platfromservice
+    spec:
+      containers:
+        - name: platfromservice
+          image: candem16/platformservice:latest
