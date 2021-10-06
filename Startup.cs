@@ -1,5 +1,6 @@
 using System;
 using Micro.PlatformService.Data;
+using Micro.PlatformService.SyncDataServices.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,12 +24,15 @@ namespace Micro.PlatformService
         {
             services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemDB")); //This will be used at development enviroment. When we move on to production stage at Kubernetes, we will switch to SqlServer.
             services.AddScoped<IPlatformRepo, PlatformRepo>();
+            services.AddHttpClient<ICommandDataClient,HttpCommandDataClient>();
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Micro.PlatformService", Version = "v1" });
             });
+
+            Console.WriteLine($"--> Commands Service endpoint:{Configuration["CommandService"]}");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
