@@ -27,7 +27,7 @@ namespace Micro.PlatformService.Data
                     new Platform() {Name="Sql Server Express", Publisher="Microsoft", Cost="Free"},
                     new Platform() {Name="Kubernetes", Publisher="Cloud Native Computing Foundation", Cost="Free"},
                     new Platform() {Name="Postgresql", Publisher="PostgreSQL Global Development Group", Cost="Free"},
-                    new Platform() {Name="Node.js", Publisher="	OpenJS Foundation", Cost="Free"}
+                    new Platform() {Name="Node.js", Publisher="OpenJS Foundation", Cost="Free"}
                 );
 
                 dbContext.SaveChanges();
