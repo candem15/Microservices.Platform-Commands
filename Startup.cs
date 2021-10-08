@@ -13,18 +13,30 @@ namespace Micro.PlatformService
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+        private readonly IHostEnvironment _env;
+        public Startup(IConfiguration configuration, IHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
-
-        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemDB")); //This will be used at development enviroment. When we move on to production stage at Kubernetes, we will switch to SqlServer.
+            if (_env.IsDevelopment())
+            {
+                Console.WriteLine("--> InMemDB using...");
+                services.AddDbContext<AppDbContext>(options =>
+                    options.UseInMemoryDatabase("InMemDB")); //This will be used at development enviroment. When we move on to production stage at Kubernetes, we will switch to SqlServer.
+            }
+            else
+            {
+                Console.WriteLine("--> Sql Server using...");
+                services.AddDbContext<AppDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("PlatformSqlConnection")));
+            }
             services.AddScoped<IPlatformRepo, PlatformRepo>();
-            services.AddHttpClient<ICommandDataClient,HttpCommandDataClient>();
+            services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
@@ -34,10 +46,9 @@ namespace Micro.PlatformService
 
             Console.WriteLine($"--> Commands Service endpoint:{Configuration["CommandService"]}");
         }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (_env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
@@ -55,7 +66,7 @@ namespace Micro.PlatformService
                 endpoints.MapControllers();
             });
 
-            PrepDb.PrepPopulation(app);
+            PrepDb.PrepPopulation(app, _env.IsProduction());
         }
     }
 }
