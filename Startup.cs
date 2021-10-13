@@ -1,4 +1,5 @@
 using System;
+using Micro.PlatformService.AsyncDataServices;
 using Micro.PlatformService.Data;
 using Micro.PlatformService.SyncDataServices.Http;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +37,7 @@ namespace Micro.PlatformService
                     options.UseSqlServer(Configuration.GetConnectionString("PlatformSqlConnection")));
             }
             services.AddScoped<IPlatformRepo, PlatformRepo>();
+            services.AddSingleton<IMessageBusClient, MessageBusClient>();
             services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
