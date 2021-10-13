@@ -1,5 +1,6 @@
 using System;
 using Micro.CommandsService.Data;
+using Micro.CommandsService.EventProcessing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,7 @@ namespace Micro.CommandsService
             services.AddScoped<ICommandRepo,CommandRepo>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddControllers();
+            services.AddSingleton<IEventProcessor,EventProcessor>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Micro.CommandsService", Version = "v1" });

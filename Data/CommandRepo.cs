@@ -50,7 +50,7 @@ namespace Micro.CommandsService.Data
             return _context.Commands.Where(p => p.PlatformId == platformId).OrderBy(c => c.Platform.Name);
         }
 
-        public bool PlatformExist(int platformId)
+        public bool PlatformExists(int platformId)
         {
             return _context.Platforms.Any(p => p.Id == platformId);
         }
@@ -58,6 +58,11 @@ namespace Micro.CommandsService.Data
         public bool SaveChanges()
         {
             return (_context.SaveChanges() >= 0);
+        }
+
+        public bool ExternalPlatformExists(int externalPlatformId)
+        {
+              return _context.Platforms.Any(p => p.ExternalId == externalPlatformId);
         }
     }
 }

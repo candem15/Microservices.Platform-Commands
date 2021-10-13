@@ -9,9 +9,14 @@ namespace Micro.CommandsService.Profiles
         public CommandsProfile()
         {
             // Source --> Target
-            CreateMap<Platform,PlatformReadDto>();
-            CreateMap<Command,CommandReadDto>();
-            CreateMap<CommandCreateDto,Command>();
+            CreateMap<Platform, PlatformReadDto>();
+            CreateMap<Command, CommandReadDto>();
+            CreateMap<CommandCreateDto, Command>();
+            CreateMap<PlatformPublishedDto, Platform>()
+                .ForMember(
+                    destinationMember => destinationMember.ExternalId,
+                    memberOption => memberOption.MapFrom(
+                        sourceMember => sourceMember.Id));
         }
     }
 }

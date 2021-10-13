@@ -26,7 +26,7 @@ namespace Micro.CommandsService.Controllers
         public ActionResult<IEnumerable<CommandReadDto>> GetCommandsForPlatform(int platformId)
         {
             Console.WriteLine($"--> Getting commands for platform: {platformId} ");
-            if (_repository.PlatformExist(platformId))
+            if (_repository.PlatformExists(platformId))
             {
                 var commandsItem = _repository.GetCommandsForPlatform(platformId);
                 return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandsItem));
@@ -41,7 +41,7 @@ namespace Micro.CommandsService.Controllers
         public ActionResult<CommandReadDto> GetCommandForPlatform(int platformId, int commandId)
         {
             Console.WriteLine($"--> Getting command for platform: {platformId} ");
-            if (_repository.PlatformExist(platformId))
+            if (_repository.PlatformExists(platformId))
             {
                 var commandItem = _repository.GetCommand(platformId, commandId);
                 if (commandItem == null)
@@ -55,10 +55,10 @@ namespace Micro.CommandsService.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CommandReadDto>> CreateCommandForPlatform(int platformId, CommandCreateDto command)
+        public ActionResult<CommandReadDto> CreateCommandForPlatform(int platformId, CommandCreateDto command)
         {
             Console.WriteLine($"--> Creating command for platform: {platformId} ");
-            if (_repository.PlatformExist(platformId))
+            if (_repository.PlatformExists(platformId))
             {
                 var commandModel = _mapper.Map<Command>(command);
                 _repository.CreateCommand(platformId, commandModel);
