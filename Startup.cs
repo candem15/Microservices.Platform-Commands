@@ -1,4 +1,5 @@
 using System;
+using Micro.CommandsService.AsyncDataServices;
 using Micro.CommandsService.Data;
 using Micro.CommandsService.EventProcessing;
 using Microsoft.AspNetCore.Builder;
@@ -23,12 +24,24 @@ namespace Micro.CommandsService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("CommandsSqlMigrationConnection")));
-            services.AddScoped<ICommandRepo,CommandRepo>();
+            if (_env.IsDevelopment())
+            {
+                services.AddDbContext<AppDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("CommandsSqlMigrationConnection")));
+            }
+            else
+            {
+                services.AddDbContext<AppDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("CommandsSqlConnection")));
+
+            }
+            services.AddScoped<ICommandRepo, CommandRepo>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddControllers();
-            services.AddSingleton<IEventProcessor,EventProcessor>();
+
+            services.AddHostedService<MessageBusSubscriber>();
+
+            services.AddSingleton<IEventProcessor, EventProcessor>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Micro.CommandsService", Version = "v1" });

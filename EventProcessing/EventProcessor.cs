@@ -25,7 +25,7 @@ namespace Micro.CommandsService.EventProcessing
             switch(eventType)
             {
                 case EventType.PlatformPublished:
-                    // Do something with it
+                    addPlatform(message);
                     break;
                 default:
                     break;

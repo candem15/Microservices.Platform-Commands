@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using AutoMapper;
 using Micro.CommandsService.Data;
 using Micro.CommandsService.Dtos;
@@ -63,7 +62,9 @@ namespace Micro.CommandsService.Controllers
                 var commandModel = _mapper.Map<Command>(command);
                 _repository.CreateCommand(platformId, commandModel);
                 var commandReadDto = _mapper.Map<CommandReadDto>(commandModel);
-                return CreatedAtRoute(nameof(CreateCommandForPlatform), new { Id = commandReadDto.Id, PlatformID = platformId }, commandReadDto);
+
+                return CreatedAtRoute(nameof(CreateCommandForPlatform),
+                    new { platformId = platformId, commandId = commandReadDto.Id }, commandReadDto);
             }
             else
             {

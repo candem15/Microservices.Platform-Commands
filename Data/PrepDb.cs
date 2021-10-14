@@ -34,13 +34,13 @@ namespace Micro.CommandsService.Data
             {
                 Console.WriteLine("--> Seeding data...");
 
-                /* dbContext.Platforms.AddRange(
-                     new Platform() { Name = "Dot Net", Publisher = "Microsoft", Cost = "Free" },
-                     new Platform() { Name = "Sql Server Express", Publisher = "Microsoft", Cost = "Free" },
-                     new Platform() { Name = "Kubernetes", Publisher = "Cloud Native Computing Foundation", Cost = "Free" },
-                     new Platform() { Name = "Postgresql", Publisher = "PostgreSQL Global Development Group", Cost = "Free" },
-                     new Platform() { Name = "Node.js", Publisher = "OpenJS Foundation", Cost = "Free" }
-                 );*/
+                dbContext.Platforms.AddRange(
+                 new Platform() { Id = 1, Name = "Dot Net", ExternalId = 1 },
+                 new Platform() { Id = 2, Name = "Sql Server Express", ExternalId = 2 },
+                 new Platform() { Id = 3, Name = "Kubernetes", ExternalId = 3 },
+                 new Platform() { Id = 4, Name = "Postgresql", ExternalId = 4 },
+                 new Platform() { Id = 5, Name = "Node.js", ExternalId = 5 }
+             );
 
                 dbContext.SaveChanges();
             }
