@@ -1,9 +1,12 @@
 using System;
+using System.IO;
 using Micro.PlatformService.AsyncDataServices;
 using Micro.PlatformService.Data;
+using Micro.PlatformService.SyncDataServices.Grpc;
 using Micro.PlatformService.SyncDataServices.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +42,7 @@ namespace Micro.PlatformService
             services.AddScoped<IPlatformRepo, PlatformRepo>();
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
             services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
+            services.AddGrpc();
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
@@ -57,7 +61,7 @@ namespace Micro.PlatformService
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Micro.PlatformService v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -66,6 +70,12 @@ namespace Micro.PlatformService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<GrpcPlatformService>();
+                // This is for serve up proto file to client as contract.(Optional)
+                endpoints.MapGet("/Protos/platforms.proto", async context =>
+                {
+                    await context.Response.WriteAsync(File.ReadAllText("Protos/platforms.proto"));
+                });
             });
 
             PrepDb.PrepPopulation(app, _env.IsProduction());
