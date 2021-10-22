@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Micro.CommandsService.Models;
+using Micro.CommandsService.SyncDataServices.Grpc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,11 +15,17 @@ namespace Micro.CommandsService.Data
         {
             using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
             {
-                SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>());
+                var grpcClient = serviceScope.ServiceProvider.GetService<IPlatformDataClient>();
+                var platforms = grpcClient.ReturnAllPlatforms();
+
+                SeedData(
+                    serviceScope.ServiceProvider.GetService<AppDbContext>(),
+                    serviceScope.ServiceProvider.GetService<ICommandRepo>(),
+                    platforms);
             }
         }
 
-        private static void SeedData(AppDbContext dbContext)
+        private static void SeedData(AppDbContext dbContext, ICommandRepo repo, IEnumerable<Platform> platforms)
         {
             Console.WriteLine("--> Trying to apply migrations...");
 
@@ -46,7 +54,15 @@ namespace Micro.CommandsService.Data
             }
             else
             {
-                Console.WriteLine("--> We aldready have data");
+                Console.WriteLine("--> Seeding additional platforms...");
+
+                foreach (var platform in platforms)
+                {
+                    if (!repo.ExternalPlatformExists(platform.ExternalId))
+                    {
+                        repo.CreatePlatform(platform);
+                    }
+                }
             }
         }
     }
