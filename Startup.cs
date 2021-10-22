@@ -2,6 +2,7 @@ using System;
 using Micro.CommandsService.AsyncDataServices;
 using Micro.CommandsService.Data;
 using Micro.CommandsService.EventProcessing;
+using Micro.CommandsService.SyncDataServices.Grpc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace Micro.CommandsService
             services.AddControllers();
 
             services.AddHostedService<MessageBusSubscriber>();
-
+            services.AddScoped<IPlatformDataClient,PlatformDataClient>();
             services.AddSingleton<IEventProcessor, EventProcessor>();
             services.AddSwaggerGen(c =>
             {
